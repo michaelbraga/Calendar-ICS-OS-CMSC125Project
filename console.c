@@ -648,7 +648,7 @@ int console_execute(const char *str)
                 }
                 else  
     if (strcmp(u,"ver")==0) {
-		printf("%s",dex32_versionstring);
+    printf("%s",dex32_versionstring);
                 }
                 else
     if (strcmp(u,"cpuid")==0)
@@ -840,6 +840,13 @@ int console_execute(const char *str)
 
               }
               else
+/*============================== CMSC 125 Project ==============================*/
+    if (stcrmp(u, "cal") == 0)
+      {
+        printf("Calendar!");
+      }
+      else
+/*============================== CMSC 125 Project ==============================*/
    if (strcmp(u,"copy")==0)
               {
               u=strtok(0," ");
@@ -887,7 +894,7 @@ int console_execute(const char *str)
              }
              else
     if (strcmp(u,"lsext")==0)
-    			 {
+           {
               extension_list();
              }
              else
@@ -921,13 +928,13 @@ int console_execute(const char *str)
              }
              else         
     if (strcmp(u,"unload")==0)
-    			 {
+           {
              u=strtok(0," ");
              if (u!=0)
-             	{
-	             if (module_unload_library(u)==-1)
+              {
+               if (module_unload_library(u)==-1)
                 printf("Error unloading library");
-   	         };
+             };
              }
              else
     if (strcmp(u,"demo_graphics")==0)
