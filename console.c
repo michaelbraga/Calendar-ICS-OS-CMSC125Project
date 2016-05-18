@@ -841,7 +841,7 @@ int console_execute(const char *str)
               }
               else
 /*============================== CMSC 125 Project ==============================*/
-    if (stcrmp(u, "cal") == 0)
+    if (strcmp(u, "cal") == 0)
       {
         printf("Calendar!");
       }
