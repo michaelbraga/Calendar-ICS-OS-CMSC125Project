@@ -658,7 +658,7 @@ void show_year_calendar(int year){
 	}
 }
 
-void tolowermonthname(char str[]){
+void tolowermonthname(char str[]){ // changes string to lowercase
   int i = 0;
 
   while(str[i] != '\0'){
@@ -667,7 +667,7 @@ void tolowermonthname(char str[]){
   }
 }
 
-int getmonthnumber(char *month){
+int getmonthnumber(char *month){ // Returns corresponding month number of a month name
   if(strcmp(month,"january")==0 || strcmp(month,"jan")==0) return 1;
   else if(strcmp(month,"february")==0 || strcmp(month,"feb")==0) return 2;
   else if(strcmp(month,"march")==0 || strcmp(month,"mar")==0) return 3;
@@ -704,6 +704,12 @@ void show_month_calendar(int month){
       "December"
     };
 
+    // check if leap year
+   if(year% 4 == 0 && year%100 != 0 || year%400 == 0)
+      days_in_month[2] = 29;
+   else
+      days_in_month[2] = 28;  
+
 
    for (i=1; i<=12; i++){ // loop through all the months of the current year to have a correct daycode.
       if(i==month){           
@@ -736,6 +742,9 @@ void show_month_calendar(int month){
       daycode = ( daycode + days_in_month[i] ) % 7;      
    }
 }
+/*
+   End of CMSC 125 Project =================================================================
+*/
 
 /* ==================================================================
    console_execute(const char *str):
@@ -1097,37 +1106,32 @@ int console_execute(const char *str)
     				printf("cal: option requires an argument\n");
     			}
     		} else if(strcmp(u, "-m")==0 || strcmp(u, "-month")){
-            u = strtok(0, " ");
+            u = strtok(0, " "); // get next argument
 
-            if(u!=0){
-               if(atoi(u)==0){   
-                  tolowermonthname(u);
-                  monthnumber = getmonthnumber(u);
+            if(u!=0){ // check if there is one
+               if(atoi(u)==0){ // if argument is not a number (string).
+                  tolowermonthname(u); // change string to lowercase
+                  monthnumber = getmonthnumber(u); // check if string is a monthname and assign corresponding monthnumber
                   if(monthnumber == 0 || monthnumber > 12)
                      printf("cal: %s is neither a month number (1..12) nor a name\n", month);
-               } else {
+               } else { // if argument is a number
                   monthnumber = atoi(u);
                   if(monthnumber == 0 || monthnumber > 12)
                      printf("cal: %d is neither a month number (1..12) nor a name\n", monthnumber);
                }
 
-               if(monthnumber > 0 && monthnumber <=12){
+               if(monthnumber > 0 && monthnumber <=12)
                   show_month_calendar(monthnumber);
-               }
 
-            }
-            else {
+            } else 
                printf("cal: option requires an argument\n");
-            }
-         }
-         else { // no arguments, display current month of the current year
-            show_month_calendar(time_systime.month);
-         }
-
+         } else 
+            printf("cal: available options -m | -month | -y |-year \n");
     	}
-   	
-   	}
-    	else
+   	else // no arguments, display current month of the current year
+        show_month_calendar(time_systime.month);
+   }
+   else
 /*============================== CMSC 125 Project ==============================*/
    if (strcmp(u,"copy")==0)
               {
