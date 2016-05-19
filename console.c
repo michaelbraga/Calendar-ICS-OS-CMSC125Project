@@ -521,6 +521,7 @@ int determine_first_day(int year){
 	daycode = (year + a - b + c) %7;
 	return daycode;
 }
+
 void printSpace(int lenOfString){
 	int i, spaces = 22 - lenOfString;
 	for (i = 0; i < spaces; ++i)
@@ -655,6 +656,85 @@ void show_year_calendar(int year){
 		}
 		daycode = ( daycode3 + days_in_month[month3] ) % 7;
 	}
+}
+
+void tolowermonthname(char str[]){
+  int i = 0;
+
+  while(str[i] != '\0'){
+    str[i] = tolower(str[i]);
+    i++;
+  }
+}
+
+int getmonthnumber(char *month){
+  if(strcmp(month,"january")==0 || strcmp(month,"jan")==0) return 1;
+  else if(strcmp(month,"february")==0 || strcmp(month,"feb")==0) return 2;
+  else if(strcmp(month,"march")==0 || strcmp(month,"mar")==0) return 3;
+  else if(strcmp(month,"april")==0 || strcmp(month,"apr")==0) return 4;
+  else if(strcmp(month,"may")==0) return 5;
+  else if(strcmp(month,"june")==0 || strcmp(month,"jun")==0) return 6;
+  else if(strcmp(month,"july")==0 || strcmp(month,"jul")==0) return 7;
+  else if(strcmp(month,"august")==0 || strcmp(month,"aug")==0) return 8;
+  else if(strcmp(month,"september")==0 || strcmp(month,"sept")==0) return 9;
+  else if(strcmp(month,"october")==0 || strcmp(month,"oct")==0) return 10;
+  else if(strcmp(month,"november")==0 || strcmp(month,"nov")==0) return 11;
+  else if(strcmp(month,"december")==0 || strcmp(month,"dec")==0 ) return 12;
+  else return 0;
+}
+
+void show_month_calendar(int month){
+    int year = time_systime.year;
+    int daycode = determine_first_day(year);
+    int day, i;
+    int days_in_month[]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+    char *months[]= {
+      " ",
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    };
+
+
+   for (i=1; i<=12; i++){ // loop through all the months of the current year to have a correct daycode.
+      if(i==month){           
+        textcolor(YELLOW);
+        printf("%s", months[i]);
+        textcolor(WHITE);
+        printf("\nSu Mo Tu We Th Fr Sa\n" );
+         
+        // Correct the position for the first date
+        if(daycode!=0){
+          for(day=1; day<=1+daycode*2.9; day++)
+            printf(" ");
+        }
+
+        // Print all the dates for one month
+        for (day=1; day<=days_in_month[i]; day++){
+          if(day == time_systime.day && i == time_systime.month && year == time_systime.year)
+            textcolor(GREEN);
+          else textcolor(WHITE);
+            printf("%2d", day);
+
+          // Is day before Sat? Else start next line Sun.
+          if ((day+daycode)% 7 > 0 ) printf(" ");
+          else printf("\n" );
+        }
+      
+        printf("\n");
+      }
+      // Set position for next month
+      daycode = ( daycode + days_in_month[i] ) % 7;      
+   }
 }
 
 /* ==================================================================
@@ -992,16 +1072,16 @@ int console_execute(const char *str)
 /*============================== CMSC 125 Project ==============================*/
     if (strcmp(u, "cal") == 0) {
     	int year = 0;
+      char month[20];
+      int monthnumber;
     	
     	// get arguments
     	u=strtok(0, " ");
 
     	// check if there are arguments
     	if (u!=0){
-
     		// if argument is year
     		if(strcmp(u, "-y")==0 || strcmp(u, "-year")){
-    			
     			u = strtok(0, " "); // get next argument
 
     			// check if there is one
@@ -1014,9 +1094,36 @@ int console_execute(const char *str)
     				}
     			}
     			else{
-    				printf("No args baby!\n");
+    				printf("cal: option requires an argument\n");
     			}
-    		}
+    		} else if(strcmp(u, "-m")==0 || strcmp(u, "-month")){
+            u = strtok(0, " ");
+
+            if(u!=0){
+               if(atoi(u)==0){   
+                  tolowermonthname(u);
+                  monthnumber = getmonthnumber(u);
+                  if(monthnumber == 0 || monthnumber > 12)
+                     printf("cal: %s is neither a month number (1..12) nor a name\n", month);
+               } else {
+                  monthnumber = atoi(u);
+                  if(monthnumber == 0 || monthnumber > 12)
+                     printf("cal: %d is neither a month number (1..12) nor a name\n", monthnumber);
+               }
+
+               if(monthnumber > 0 && monthnumber <=12){
+                  show_month_calendar(monthnumber);
+               }
+
+            }
+            else {
+               printf("cal: option requires an argument\n");
+            }
+         }
+         else { // no arguments, display current month of the current year
+            show_month_calendar(time_systime.month);
+         }
+
     	}
    	
    	}
