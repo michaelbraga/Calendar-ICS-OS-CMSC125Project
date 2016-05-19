@@ -1090,7 +1090,7 @@ int console_execute(const char *str)
     	// check if there are arguments
     	if (u!=0){
     		// if argument is year
-    		if(strcmp(u, "-y")==0 || strcmp(u, "-year")){
+    		if(strcmp(u, "-y")==0 || strcmp(u, "-year")==0){
     			u = strtok(0, " "); // get next argument
 
     			// check if there is one
