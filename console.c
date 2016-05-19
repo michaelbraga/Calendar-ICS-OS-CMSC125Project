@@ -508,157 +508,175 @@ void console_ls(int style, int sortmethod)
     
 };
 
-/*
-	CMSC 125 Project =================================================================
-*/
+/************************************************************************
+* Authors:  Michael Braga, Angelica Carrasco                            * 
+* Date:     May 20, 2016                                                * 
+* Subject:  CMSC 125 ST-7L                                              *
+*                                                                       *      
+* Function Definitions                                                  *       
+* Description: Functions below are used for the system command 'cal'    *             
+*              e.g. cal, cal -m 1, cal -y 2016                          *   
+************************************************************************/
+
+// determines the first day of a certain year
+// computable years ranges from 1800 - present
 int determine_first_day(int year){
-	int daycode;
-	int a, b, c;
-	
-	a = (year - 1.)/ 4.0;
-	b = (year - 1.)/ 100.;
-	c = (year - 1.)/ 400.;
-	daycode = (year + a - b + c) %7;
-	return daycode;
+  int daycode;
+  int a, b, c;
+  
+  a = (year - 1.)/ 4.0;
+  b = (year - 1.)/ 100.;
+  c = (year - 1.)/ 400.;
+  daycode = (year + a - b + c) %7;
+
+  return daycode;
 }
 
+// prints the necessary spaces for the calendar
 void printSpace(int lenOfString){
-	int i, spaces = 22 - lenOfString;
-	for (i = 0; i < spaces; ++i)
-		printf(" ");
+  int i, spaces = 22 - lenOfString;
+  for (i = 0; i < spaces; ++i)
+    printf(" ");
 }
+
+// prints the gap between the empty weeks in months 
 void printGap(int day, int daycode, int lastday){
-	int j, space;
-	
-	if(day == 143){
-		printf("                      ");
-	}
-	else if((day-1) == lastday){
-		// printf("[%d]", (day-2+daycode)%7);
-		switch(((day-2)+daycode)%7){
-			case 0:	space = 18; break;
-			case 1:	space = 15; break;
-			case 2:	space = 12; break;
-			case 3:	space = 9; break;
-			case 4:	space = 6; break;
-			case 5:	space = 3; break;
-			case 6:	space = 0; break;
-		}
-		for(j=0; j<space; j+=1)
-			printf(" ");
-		printf(" ");
-	}
-	else{
-		printf(" ");
-	}
+  int j, space;
+  
+  if(day == 143){
+    printf("                      ");
+  }
+  else if((day-1) == lastday){
+    switch(((day-2)+daycode)%7){
+      case 0: space = 18; break;
+      case 1: space = 15; break;
+      case 2: space = 12; break;
+      case 3: space = 9; break;
+      case 4: space = 6; break;
+      case 5: space = 3; break;
+      case 6: space = 0; break;
+    }
+    for(j=0; j<space; j+=1)
+      printf(" ");
+    printf(" ");
+  }
+  else{
+    printf(" ");
+  }
 }
+
+// prints the sequence of days upto saturday in a week, and stops
+// when day is the last day of the month
 void printDays(int * day, int daycode, int m, int y){
-	int d = *day;
-	if (d <= m) {
-		do
-		{	
-
-			if(time_systime.day == d && time_systime.month == m && time_systime.year == y)
-				textcolor(GREEN);
-			printf("%2d ", d);
-			textcolor(WHITE);
-			d += 1;
-		} while (((d + daycode) % 7) != 1 && d <= m);
-		*day = d;
-	}
+  int d = *day;
+  if (d <= m) {
+    do
+    { 
+      if(time_systime.day == d && time_systime.month == m && time_systime.year == y)
+        textcolor(LIGHTCYAN);
+      printf("%2d ", d);
+      textcolor(WHITE);
+      d += 1;
+    } while (((d + daycode) % 7) != 1 && d <= m);
+    *day = d;
+  }
 }
+
+// prints the whole calendar for a certain year
 void show_year_calendar(int year){
-	// stuff needed for making the calendar
-	int days_in_month[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-	char *months[] = {
-		" ",
-		"January",
-		"February",
-		"March",
-		"April",
-		"May",
-		"June",
-		"July",
-		"August",
-		"September",
-		"October",
-		"November",
-		"December"
-	};
+  // stuff needed for making the calendar
+  int days_in_month[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+  char *months[] = {
+    " ",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  };
 
-	int month, month2, month3, day, day2, day3, i, daycode2, daycode3, j, space;
-	// determine the day of the January 1 year
-	int daycode = determine_first_day(year);
-	
-	// check if leap year
-	if(year% 4 == 0 && year%100 != 0 || year%400 == 0)
-		days_in_month[2] = 29;
-	else
-		days_in_month[2] = 28;
+  int month, month2, month3, day, day2, day3, i, daycode2, daycode3, j, space;
+  // determine the day of the January 1 year
+  int daycode = determine_first_day(year);
+  
+  // check if leap year
+  if(year% 4 == 0 && year%100 != 0 || year%400 == 0)
+    days_in_month[2] = 29;
+  else
+    days_in_month[2] = 28;
 
 
-	// start printing calendar
-	printf("\n                              %d", year);
-	
-	for ( month = 1; month <= 12; month+=3 )
-	{
-		// initialize the next two months with respect to 'month' var
-		month2 = month+1; month3 = month+2;
+  // start printing calendar
+  printf("\n                              %d", year);
+  
+  for ( month = 1; month <= 12; month+=3 )
+  {
+    // initialize the next two months with respect to 'month' var
+    month2 = month+1; month3 = month+2;
 
-		textcolor(YELLOW);
-		// print months
-		printf("\n%s", months[month]);
-		printSpace(strlen(months[month]));
-		printf("%s", months[month2]);
-		printSpace(strlen(months[month2]));
-		printf("%s", months[month3]);
-		textcolor(WHITE);
+    textcolor(MAGENTA);
+    // print months
+    printf("\n%s", months[month]);
+    printSpace(strlen(months[month]));
+    printf("%s", months[month2]);
+    printSpace(strlen(months[month2]));
+    printf("%s", months[month3]);
+    textcolor(LIGHTGRAY);
 
-		// print days in a week
-		printf("\nSu Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa\n" );
-		
-		// initialize the starting dates of each month
-		day = 1, day2 = 1, day3 = 1;
+    // print days in a week
+    printf("\nSu Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa\n" );
+    textcolor(WHITE);
 
-		// initialize the starting day of the next two months
-		daycode2 = ( daycode + days_in_month[month] ) % 7;
-		daycode3 = ( daycode2 + days_in_month[month2] ) % 7;
+    // initialize the starting dates of each month
+    day = 1, day2 = 1, day3 = 1;
 
-		// loop printing the week by week of 'month' -> 'month' + 2
-		while(day <= days_in_month[month] || day2 <= days_in_month[month2] || day3 <= days_in_month[month3]){
-			// print first month ----------------------------------
-			if(day == 1){
-				for(i=0; i<daycode; i+=1)
-					printf("   ");
-			}
-			printDays(&day, daycode, days_in_month[month], year);
-			printGap(day, daycode, days_in_month[month]);
-			if(day-1 == days_in_month[month])
-				day = 143;
+    // initialize the starting day of the next two months
+    daycode2 = ( daycode + days_in_month[month] ) % 7;
+    daycode3 = ( daycode2 + days_in_month[month2] ) % 7;
 
-			// print second month ----------------------------------
-			if(day2 == 1){
-				for(i=0; i<daycode2; i+=1)
-					printf("   ");
-			}
-			printDays(&day2, daycode2, days_in_month[month2], year);
-			printGap(day2, daycode2, days_in_month[month2]);
-			if(day2-1 == days_in_month[month2])
-				day2 = 143;
+    // loop printing the week by week of 'month' -> 'month' + 2
+    while(day <= days_in_month[month] || day2 <= days_in_month[month2] || day3 <= days_in_month[month3]){
+      // print first month ----------------------------------
+      if(day == 1){
+        for(i=0; i<daycode; i+=1)
+          printf("   ");
+      }
+      printDays(&day, daycode, days_in_month[month], year);
+      printGap(day, daycode, days_in_month[month]);
+      if(day-1 == days_in_month[month])
+        day = 143;
 
-			// print third month ----------------------------------
-			if(day3 == 1){
-				for(i=0; i<daycode3; i+=1)
-					printf("   ");
-			}
-			printDays(&day3, daycode3, days_in_month[month3], year);
-			printf("\n");
-		}
-		daycode = ( daycode3 + days_in_month[month3] ) % 7;
-	}
+      // print second month ----------------------------------
+      if(day2 == 1){
+        for(i=0; i<daycode2; i+=1)
+          printf("   ");
+      }
+      printDays(&day2, daycode2, days_in_month[month2], year);
+      printGap(day2, daycode2, days_in_month[month2]);
+      if(day2-1 == days_in_month[month2])
+        day2 = 143;
+
+      // print third month ----------------------------------
+      if(day3 == 1){
+        for(i=0; i<daycode3; i+=1)
+          printf("   ");
+      }
+      printDays(&day3, daycode3, days_in_month[month3], year);
+      printf("\n");
+    }
+    daycode = ( daycode3 + days_in_month[month3] ) % 7;
+  }
 }
 
-void tolowermonthname(char str[]){ // changes string to lowercase
+// changes string to lowercase
+void tolowermonthname(char str[]){ 
   int i = 0;
 
   while(str[i] != '\0'){
@@ -667,7 +685,8 @@ void tolowermonthname(char str[]){ // changes string to lowercase
   }
 }
 
-int getmonthnumber(char *month){ // Returns corresponding month number of a month name
+// Returns corresponding month number of a month name
+int getmonthnumber(char *month){ 
   if(strcmp(month,"january")==0 || strcmp(month,"jan")==0) return 1;
   else if(strcmp(month,"february")==0 || strcmp(month,"feb")==0) return 2;
   else if(strcmp(month,"march")==0 || strcmp(month,"mar")==0) return 3;
@@ -683,6 +702,7 @@ int getmonthnumber(char *month){ // Returns corresponding month number of a mont
   else return 0;
 }
 
+// prints the calendar for a month in the current year
 void show_month_calendar(int month){
     int year = time_systime.year;
     int daycode = determine_first_day(year);
@@ -713,11 +733,11 @@ void show_month_calendar(int month){
 
    for (i=1; i<=12; i++){ // loop through all the months of the current year to have a correct daycode.
       if(i==month){           
-        textcolor(YELLOW);
+        textcolor(MAGENTA);
         printf("%s", months[i]);
-        textcolor(WHITE);
+        textcolor(LIGHTGRAY);
         printf("\nSu Mo Tu We Th Fr Sa\n" );
-         
+        textcolor(WHITE);
         // Correct the position for the first date
         if(daycode!=0){
           for(day=1; day<=1+daycode*2.9; day++)
@@ -727,7 +747,7 @@ void show_month_calendar(int month){
         // Print all the dates for one month
         for (day=1; day<=days_in_month[i]; day++){
           if(day == time_systime.day && i == time_systime.month && year == time_systime.year)
-            textcolor(GREEN);
+            textcolor(LIGHTCYAN);
           else textcolor(WHITE);
             printf("%2d", day);
 
@@ -742,9 +762,9 @@ void show_month_calendar(int month){
       daycode = ( daycode + days_in_month[i] ) % 7;      
    }
 }
-/*
-   End of CMSC 125 Project =================================================================
-*/
+/**************************************************************************
+   End  =================================================================
+**************************************************************************/
 
 /* ==================================================================
    console_execute(const char *str):
@@ -886,7 +906,7 @@ int console_execute(const char *str)
                 }
                 else  
     if (strcmp(u,"ver")==0) {
-		printf("%s",dex32_versionstring);
+    printf("%s",dex32_versionstring);
                 }
                 else
     if (strcmp(u,"cpuid")==0)
@@ -1078,57 +1098,101 @@ int console_execute(const char *str)
 
               }
               else
-/*============================== CMSC 125 Project ==============================*/
+
+    /************************************************************************
+    * Authors:  Michael Braga, Angelica Carrasco                            * 
+    * Date:     May 20, 2016                                                * 
+    * Subject:  CMSC 125 ST-7L                                              *
+    *                                                                       *      
+    * 'cal' system command                                                  *       
+    *  e.g. cal, cal -m 1, cal -y 2016                                      *   
+    ************************************************************************/
     if (strcmp(u, "cal") == 0) {
-    	int year = 0;
+      int year = 0;
       char month[20];
       int monthnumber;
-    	
-    	// get arguments
-    	u=strtok(0, " ");
+      
+      // get arguments
+      u=strtok(0, " ");
 
-    	// check if there are arguments
-    	if (u!=0){
-    		// if argument is year
-    		if(strcmp(u, "-y")==0 || strcmp(u, "-year")==0){
-    			u = strtok(0, " "); // get next argument
+      // check if there are arguments
+      if (u!=0){
+        
+        // if option is year
+        if(strcmp(u, "-y")==0 || strcmp(u, "-year")==0){
+          u = strtok(0, " "); // get next argument
 
-    			// check if there is one
-    			if (u!=0){
-    				year = atoi(u);
-    				if(year < 1800){
-    					printf("Invalid argument! Range must be from year 1800\n");
-    				}else{
-    					show_year_calendar(year);
-    				}
-    			}
-    			else{
-    				printf("cal: option requires an argument\n");
-    			}
-    		} else if(strcmp(u, "-m")==0 || strcmp(u, "-month")){
+          // check if there is one
+          if (u!=0){
+            year = atoi(u);
+            if(year < 1800){
+              textcolor(LIGHTCYAN);
+              printf("cal: ");
+              textcolor(RED);
+              printf("Invalid argument!\n");
+              textcolor(WHITE);
+              printf("Range must be from year (1800..present) \n");
+            }else{
+              show_year_calendar(year);
+            }
+          }
+          else{
+            textcolor(LIGHTCYAN);
+            printf("cal: ");
+            textcolor(WHITE);
+            printf("option requires an argument\n");
+          }
+        } 
+
+        // if option is month
+        else if(strcmp(u, "-m")==0 || strcmp(u, "-month")==0){
             u = strtok(0, " "); // get next argument
 
             if(u!=0){ // check if there is one
+
                if(atoi(u)==0){ // if argument is not a number (string).
                   tolowermonthname(u); // change string to lowercase
                   monthnumber = getmonthnumber(u); // check if string is a monthname and assign corresponding monthnumber
-                  if(monthnumber == 0 || monthnumber > 12)
-                     printf("cal: %s is neither a month number (1..12) nor a name\n", month);
+                  if(monthnumber == 0 || monthnumber > 12){
+                    textcolor(LIGHTCYAN);
+                    printf("cal: ");
+                    textcolor(RED);
+                    printf("Invalid argument!\n");
+                    textcolor(WHITE);
+                    printf("%s is neither a month number (1..12) nor a month name\n", u);
+                  }
+                    
                } else { // if argument is a number
                   monthnumber = atoi(u);
-                  if(monthnumber == 0 || monthnumber > 12)
-                     printf("cal: %d is neither a month number (1..12) nor a name\n", monthnumber);
+                  if(monthnumber == 0 || monthnumber > 12){
+                    textcolor(LIGHTCYAN);
+                    printf("cal: ");
+                    textcolor(RED);
+                    printf("Invalid argument!\n");
+                    textcolor(WHITE);
+                    printf("%d is neither a month number (1..12) nor a month name\n", monthnumber);
+                  }
                }
 
                if(monthnumber > 0 && monthnumber <=12)
                   show_month_calendar(monthnumber);
 
-            } else 
-               printf("cal: option requires an argument\n");
-         } else 
-            printf("cal: available options -m | -month | -y |-year \n");
-    	}
-   	else // no arguments, display current month of the current year
+            } else {
+              textcolor(LIGHTCYAN);
+              printf("cal: ");
+              textcolor(WHITE);
+              printf("option requires an argument\n");
+            }
+              
+         } else {
+            textcolor(LIGHTCYAN);
+            printf("cal: ");
+            textcolor(WHITE);
+            printf("available options -m [MONTH] | -month [MONTH] | -y [YEAR] |-year [YEAR] \n");
+         }
+            
+      }
+    else // no arguments, display current month of the current year
         show_month_calendar(time_systime.month);
    }
    else
@@ -1180,7 +1244,7 @@ int console_execute(const char *str)
              }
              else
     if (strcmp(u,"lsext")==0)
-    			 {
+           {
               extension_list();
              }
              else
@@ -1214,13 +1278,13 @@ int console_execute(const char *str)
              }
              else         
     if (strcmp(u,"unload")==0)
-    			 {
+           {
              u=strtok(0," ");
              if (u!=0)
-             	{
-	             if (module_unload_library(u)==-1)
+              {
+               if (module_unload_library(u)==-1)
                 printf("Error unloading library");
-   	         };
+             };
              }
              else
     if (strcmp(u,"demo_graphics")==0)
